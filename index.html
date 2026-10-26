@@ -167,6 +167,47 @@ input,textarea{font:inherit;color:var(--fg)}
 
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(var(--toastB, 24px) + env(safe-area-inset-bottom,0px));z-index:60;background:var(--fg);color:var(--bg);padding:10px 16px;border-radius:999px;font-size:14px;font-weight:600;max-width:calc(100% - 32px);text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.4)}
 .err{background:var(--danger-soft);color:var(--danger);border:1px solid rgba(255,107,107,.4);border-radius:var(--r);padding:12px 14px;font-size:14px}
+/* Menu annexe & pages */
+.menu{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tile{display:flex;flex-direction:column;align-items:flex-start;gap:8px;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px}
+.tile:active{background:var(--surface-2)}
+.tile svg{width:22px;height:22px;color:var(--accent)}
+.tile b{font-size:16px;font-weight:650}
+.tile span{font-size:13px;color:var(--muted)}
+.row-btn{display:grid;grid-template-columns:1fr auto;gap:2px 12px;width:100%;text-align:left;padding:14px 0}
+.row-btn:active{opacity:.6}
+.recent li{padding:0;display:block}
+.back{color:var(--fg);margin-left:-10px}
+.page-b{padding-block:16px 40px;display:flex;flex-direction:column;gap:20px}
+.month{display:flex;flex-direction:column}
+.prog{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
+.prog li{border-bottom:1px solid var(--line)}
+.prog .row-btn .nm{font-weight:600;min-width:0;overflow-wrap:anywhere}
+.prog .row-btn .val{font-family:var(--num);font-weight:700;font-size:22px;text-align:right;font-variant-numeric:tabular-nums;line-height:1.1}
+.prog .row-btn .sub{color:var(--muted);font-size:13px}
+.delta{font-size:13px;text-align:right;font-variant-numeric:tabular-nums}
+.delta.up{color:var(--ok)} .delta.down{color:var(--danger)} .delta.eq{color:var(--muted)}
+.stats2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px}
+.stat small{display:block;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.stat b{display:block;font-family:var(--num);font-weight:700;font-size:28px;line-height:1.15;font-variant-numeric:tabular-nums}
+.stat b em{font-style:normal;font-size:16px;color:var(--muted);font-weight:600}
+.stat span{font-size:13px;color:var(--muted)}
+.chips{display:flex;gap:8px}
+.chip{padding:8px 14px;border-radius:999px;background:var(--surface-2);font-size:14px;font-weight:600;color:var(--muted)}
+.chip.on{background:var(--accent-soft);color:var(--accent);box-shadow:0 0 0 1px rgba(79,140,255,.5) inset}
+.chart{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:8px 4px 4px;touch-action:pan-y}
+.chart svg{display:block;width:100%;height:auto;overflow:visible}
+.c-grid{stroke:var(--line);stroke-width:1}
+.c-ax{fill:var(--muted);font-size:11px;font-family:var(--ui)}
+.c-line{fill:none;stroke:var(--accent);stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
+.c-area{fill:var(--accent);opacity:.1}
+.c-pt{fill:var(--accent);stroke:var(--surface);stroke-width:2}
+.c-cross{stroke:var(--muted);stroke-width:1;stroke-dasharray:3 3}
+.c-sel{fill:var(--fg);stroke:var(--accent);stroke-width:3}
+.tip{position:absolute;top:6px;transform:translateX(-50%);background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:6px 10px;font-size:13px;white-space:nowrap;pointer-events:none;box-shadow:0 6px 18px rgba(0,0,0,.4)}
+.tip b{font-family:var(--num);font-size:17px;font-variant-numeric:tabular-nums}
+.danger-zone{padding-top:8px}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -190,18 +231,41 @@ input,textarea{font:inherit;color:var(--fg)}
     <button data-act="openSettings">Sauvegarder</button>
   </div>
   <button class="btn btn-primary start" data-act="startSession">Démarrer une séance</button>
+  <nav class="menu" aria-label="Menu">
+    <button class="tile" data-act="go" data-view="progress">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l5-5 4 3 8-8"/><path d="M15 7h5v5"/></svg>
+      <b>Progression</b><span id="mProg">Charges par exercice</span>
+    </button>
+    <button class="tile" data-act="go" data-view="history">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg>
+      <b>Historique</b><span id="mHist">Voir et modifier</span>
+    </button>
+  </nav>
   <section>
     <h2 class="sec-t">Dernières séances</h2>
     <div id="recent"></div>
   </section>
 </main>
 
+<!-- PAGES ANNEXES -->
+<div id="page" hidden>
+  <header class="topbar">
+    <div class="wrap" style="justify-content:flex-start;gap:4px">
+      <button class="icon-btn back" data-act="back" aria-label="Retour">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
+      </button>
+      <div class="t" style="min-width:0"><b id="pTitle"></b><span id="pSub"></span></div>
+    </div>
+  </header>
+  <div class="wrap page-b" id="pBody"></div>
+</div>
+
 <!-- SÉANCE -->
 <div id="session" hidden>
   <header class="topbar">
     <div class="wrap">
-      <div class="t"><b>Séance en cours</b><span id="sMeta"></span></div>
-      <button class="finish" data-act="openFinish">Terminer</button>
+      <div class="t"><b id="sTitle">Séance en cours</b><span id="sMeta"></span></div>
+      <button class="finish" id="finishBtn" data-act="openFinish">Terminer</button>
     </div>
   </header>
   <div class="wrap s-list" id="sList"></div>
@@ -274,7 +338,7 @@ input,textarea{font:inherit;color:var(--fg)}
 const KEY = 'fonte.v1';
 const $ = s => document.querySelector(s);
 const W_STEP = 2.5;
-const APP_VERSION = '1.0';
+const APP_VERSION = '1.1';
 const TOP = (() => { try{ return window.top === window; }catch(e){ return false; } })();
 const STANDALONE = navigator.standalone === true || (window.matchMedia && matchMedia('(display-mode: standalone)').matches);
 const IOS = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
@@ -301,7 +365,9 @@ try{ navigator.storage && navigator.storage.persist && navigator.storage.persist
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,7);
 const norm = s => s.normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/\s+/g,' ').trim();
 const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const cur = () => db.sessions.find(s => s.id === db.activeId) || null;
+// Séance affichée dans l'éditeur : la séance en cours, ou une séance passée ouverte pour modification.
+const cur = () => db.sessions.find(s => s.id === (ui.editId || db.activeId)) || null;
+const isEdit = () => !!ui.editId;
 const exById = id => db.exercises.find(e => e.id === id);
 const exName = id => (exById(id) || {name:'Exercice supprimé'}).name;
 const parseNum = v => { const n = parseFloat(String(v).replace(',', '.').replace(/\s/g,'')); return isFinite(n) ? n : NaN; };
@@ -316,9 +382,9 @@ function fmtDur(ms){
 }
 const countSets = s => s.items.reduce((a,it) => a + it.sets.length, 0);
 
-/* Dernières performances d'un exercice, hors séance donnée */
-function prevPerf(exId, exceptId){
-  const list = db.sessions.filter(s => s.id !== exceptId && s.end).sort((a,b) => b.start - a.start);
+/* Dernières performances d'un exercice, avant la séance donnée */
+function prevPerf(exId, ref){
+  const list = db.sessions.filter(s => s.id !== ref.id && s.end && s.start < ref.start).sort((a,b) => b.start - a.start);
   for(const s of list){
     const it = s.items.find(i => i.exerciseId === exId && i.sets.length);
     if(it) return { date:s.start, sets:it.sets };
@@ -332,13 +398,14 @@ function lastUsedMap(){
 }
 
 /* ---------- État d'interface ---------- */
-const ui = { ai:-1, editing:null, w:'', r:'', delArmed:false, finishArmed:false, flash:null, importData:null, removeArmed:null };
+const ui = { ai:-1, editing:null, w:'', r:'', delArmed:false, finishArmed:false, flash:null, importData:null, removeArmed:null,
+  view:'home', editId:null, chartEx:null, range:'all', sel:null, delSessionArmed:false };
 
 function prefill(s, i){
   const it = s.items[i];
   if(!it) return { w:'', r:'' };
   if(it.sets.length){ const l = it.sets[it.sets.length-1]; return { w:fmtNum(l.w), r:String(l.r) }; }
-  const p = prevPerf(it.exerciseId, s.id);
+  const p = prevPerf(it.exerciseId, s);
   if(p){ const f = p.sets[0]; return { w:fmtNum(f.w), r:String(f.r) }; }
   return { w:'', r:'' };
 }
@@ -351,10 +418,11 @@ function selectItem(i){
 /* ---------- Rendu ---------- */
 function render(){
   const s = cur();
-  $('#home').hidden = !!s;
+  $('#home').hidden = !!s || ui.view !== 'home';
+  $('#page').hidden = !!s || ui.view === 'home';
   $('#session').hidden = !s;
   $('#dock').hidden = !s;
-  if(s) renderSession(s); else renderHome();
+  if(s) renderSession(s); else if(ui.view === 'home') renderHome(); else renderPage();
   $('#storageErr').hidden = storageOk;
 }
 
@@ -365,12 +433,11 @@ function renderHome(){
   if(!done.length){
     $('#recent').innerHTML = `<p class="empty">Aucune séance pour l’instant. Démarrez-en une : vous ajouterez vos exercices au fur et à mesure, et chaque série reprendra automatiquement vos dernières valeurs.</p>`;
   } else {
-    $('#recent').innerHTML = '<ul class="recent">' + done.slice(0,8).map(s => {
-      const names = s.items.map(it => exName(it.exerciseId));
-      const shown = names.slice(0,3).join(', ') + (names.length > 3 ? ` +${names.length-3}` : '');
-      return `<li><span class="d">${esc(fmtDate(s.start))}</span><span class="k num">${plural(countSets(s),'série')} · ${fmtDur(s.end - s.start)}</span><span class="m">${esc(shown)}</span></li>`;
-    }).join('') + '</ul>';
+    $('#recent').innerHTML = '<ul class="recent">' + done.slice(0,5).map(sessionRow).join('') + '</ul>';
   }
+  const nEx = progressData().length;
+  $('#mProg').textContent = nEx ? plural(nEx,'exercice') + ' suivi' + (nEx > 1 ? 's' : '') : 'Charges par exercice';
+  $('#mHist').textContent = done.length ? plural(done.length,'séance') : 'Voir et modifier';
   // Rappel de sauvegarde
   const lastEnd = done.length ? Math.max(...done.map(s => s.end)) : 0;
   const le = db.lastExport || 0;
@@ -382,14 +449,27 @@ function renderHome(){
     : `Dernière sauvegarde il y a ${plural(days,'jour')}.`;
 }
 
+function sessionRow(s){
+  const names = s.items.map(it => exName(it.exerciseId));
+  const shown = names.slice(0,3).join(', ') + (names.length > 3 ? ` +${names.length-3}` : '');
+  return `<li><button class="row-btn" data-act="openSession" data-id="${s.id}"><span class="d">${esc(fmtDate(s.start))}</span><span class="k num">${plural(countSets(s),'série')} · ${fmtDur(s.end - s.start)}</span><span class="m">${esc(shown)}</span></button></li>`;
+}
+function sessionMeta(s){
+  return isEdit()
+    ? `${new Date(s.start).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})} · ${fmtDur(s.end - s.start)} · ${plural(countSets(s),'série')}`
+    : `${fmtDur(Date.now() - s.start)} · ${plural(countSets(s),'série')}`;
+}
+
 function renderSession(s){
   if(ui.ai >= s.items.length) ui.ai = s.items.length - 1;
   if(ui.ai < 0 && s.items.length) selectItem(s.items.length - 1);
-  $('#sMeta').textContent = `${fmtDur(Date.now() - s.start)} · ${plural(countSets(s),'série')}`;
+  $('#sTitle').textContent = isEdit() ? 'Modifier · ' + fmtDate(s.start) : 'Séance en cours';
+  $('#finishBtn').textContent = isEdit() ? 'Terminé' : 'Terminer';
+  $('#sMeta').textContent = sessionMeta(s);
 
   const cards = s.items.map((it, i) => {
     const on = i === ui.ai;
-    const p = prevPerf(it.exerciseId, s.id);
+    const p = prevPerf(it.exerciseId, s);
     const prev = p ? `<p class="prev">${esc(fmtDate(p.date))} · <b class="num">${p.sets.map(x => fmtNum(x.w) + '×' + x.r).join('  ')}</b></p>` : `<p class="prev">Première fois</p>`;
     const sets = it.sets.map((x, j) => {
       const ed = ui.editing && ui.editing.i === i && ui.editing.s === j;
@@ -408,7 +488,8 @@ function renderSession(s){
   }).join('');
 
   $('#sList').innerHTML = (cards || `<p class="empty">Ajoutez votre premier exercice. Vous pourrez en ajouter d’autres à tout moment pendant la séance.</p>`)
-    + (s.items.length ? `<button class="add-ex" data-act="openAdd"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Ajouter un exercice</button>` : '');
+    + (s.items.length ? `<button class="add-ex" data-act="openAdd"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Ajouter un exercice</button>` : '')
+    + (isEdit() ? `<div class="danger-zone"><button class="btn ${ui.delSessionArmed ? 'btn-danger' : ''}" style="${ui.delSessionArmed ? '' : 'color:var(--danger)'}" data-act="delSession">${ui.delSessionArmed ? 'Confirmer : supprimer toute la séance' : 'Supprimer cette séance'}</button></div>` : '');
   ui.flash = null;
   renderDock(s);
 }
@@ -507,7 +588,34 @@ const act = {
     document.activeElement && document.activeElement.blur();
     ui.importData = null; render();
   },
-  openFinish(){ ui.finishArmed = false; renderFinish(); $('#modalFinish').hidden = false; },
+  openFinish(){
+    if(isEdit()){ act.endEdit(); return; }
+    ui.finishArmed = false; renderFinish(); $('#modalFinish').hidden = false;
+  },
+  go(b){ ui.view = b.dataset.view; ui.sel = null; render(); window.scrollTo(0,0); },
+  back(){ ui.view = ui.view === 'chart' ? 'progress' : 'home'; ui.sel = null; render(); window.scrollTo(0,0); },
+  openChart(b){ ui.chartEx = b.dataset.id; ui.view = 'chart'; ui.sel = null; render(); window.scrollTo(0,0); },
+  setRange(b){ ui.range = b.dataset.r; ui.sel = null; renderPage(); },
+  openSession(b){
+    const s = db.sessions.find(x => x.id === b.dataset.id); if(!s) return;
+    ui.editId = s.id; ui.delSessionArmed = false; ui.ai = -1; ui.editing = null;
+    if(s.items.length) selectItem(s.items.length - 1);
+    render(); window.scrollTo(0,0);
+  },
+  endEdit(){
+    const s = cur(); if(!s) return;
+    s.items = s.items.filter(it => it.sets.length);
+    if(!countSets(s)){ db.sessions = db.sessions.filter(x => x.id !== s.id); toast('Séance vide supprimée'); }
+    else toast('Modifications enregistrées');
+    ui.editId = null; ui.ai = -1; ui.editing = null;
+    save(); render(); window.scrollTo(0,0);
+  },
+  delSession(){
+    if(!ui.delSessionArmed){ ui.delSessionArmed = true; renderSession(cur()); return; }
+    const s = cur(); db.sessions = db.sessions.filter(x => x.id !== s.id);
+    ui.editId = null; ui.ai = -1; ui.editing = null; ui.delSessionArmed = false;
+    save(); render(); window.scrollTo(0,0); toast('Séance supprimée');
+  },
   finish(){
     const s = cur(); if(!s) return;
     s.items = s.items.filter(it => it.sets.length);
@@ -629,6 +737,132 @@ function renderSettings(){
   <section class="set-sec"><p>${plural(done.length,'séance')} enregistrée${done.length > 1 ? 's' : ''} sur cet appareil.<br>Fonte · version ${APP_VERSION}${STANDALONE ? ' · app installée' : ''}</p></section>`;
 }
 
+/* ---------- Pages annexes : historique et progression ---------- */
+// Pour chaque exercice : la meilleure série (charge max) de chaque séance terminée, dans l'ordre chronologique.
+function progressData(){
+  const by = {};
+  const done = db.sessions.filter(s => s.end).sort((a,b) => a.start - b.start);
+  for(const s of done) for(const it of s.items){
+    if(!it.sets.length) continue;
+    let best = it.sets[0];
+    for(const x of it.sets) if(x.w > best.w || (x.w === best.w && x.r > best.r)) best = x;
+    (by[it.exerciseId] = by[it.exerciseId] || []).push({ t:s.start, w:best.w, r:best.r, sid:s.id });
+  }
+  return Object.keys(by).filter(id => exById(id)).map(id => ({ id, name:exName(id), pts:by[id] }))
+    .sort((a,b) => b.pts[b.pts.length-1].t - a.pts[a.pts.length-1].t);
+}
+function deltaHTML(a, b){
+  if(b == null) return `<span class="delta eq">première</span>`;
+  const d = Math.round((a - b) * 100) / 100;
+  if(d > 0) return `<span class="delta up">▲ +${fmtNum(d)} kg</span>`;
+  if(d < 0) return `<span class="delta down">▼ ${fmtNum(d)} kg</span>`;
+  return `<span class="delta eq">= stable</span>`;
+}
+
+function renderPage(){
+  const body = $('#pBody');
+  if(ui.view === 'history'){
+    const done = db.sessions.filter(s => s.end).sort((a,b) => b.start - a.start);
+    $('#pTitle').textContent = 'Historique';
+    $('#pSub').textContent = done.length ? plural(done.length,'séance') + ' · touchez pour modifier' : '';
+    if(!done.length){ body.innerHTML = `<p class="empty">Vos séances terminées apparaîtront ici. Vous pourrez les ouvrir pour corriger une série, ajouter un exercice oublié ou les supprimer.</p>`; return; }
+    const groups = [];
+    for(const s of done){
+      const k = new Date(s.start).toLocaleDateString('fr-FR', { month:'long', year:'numeric' });
+      if(!groups.length || groups[groups.length-1].k !== k) groups.push({ k, list:[] });
+      groups[groups.length-1].list.push(s);
+    }
+    body.innerHTML = groups.map(g => `<section class="month"><h3 class="sec-t">${esc(g.k)} · ${g.list.length}</h3><ul class="recent">${g.list.map(sessionRow).join('')}</ul></section>`).join('');
+    return;
+  }
+  if(ui.view === 'progress'){
+    const data = progressData();
+    $('#pTitle').textContent = 'Progression';
+    $('#pSub').textContent = 'Charge max par séance';
+    if(!data.length){ body.innerHTML = `<p class="empty">Terminez une première séance : chaque exercice aura ensuite sa courbe de progression, basée sur la charge la plus lourde soulevée à chaque séance.</p>`; return; }
+    body.innerHTML = `<ul class="prog">${data.map(e => {
+      const p = e.pts, l = p[p.length-1], pr = p.length > 1 ? p[p.length-2].w : null;
+      return `<li><button class="row-btn" data-act="openChart" data-id="${e.id}">
+        <span class="nm">${esc(e.name)}</span><span class="val">${fmtNum(l.w)}<span class="muted" style="font-size:14px"> kg</span></span>
+        <span class="sub">${plural(p.length,'séance')} · ${esc(fmtDate(l.t))}</span>${deltaHTML(l.w, pr)}
+      </button></li>`; }).join('')}</ul>`;
+    return;
+  }
+  if(ui.view === 'chart'){
+    const e = progressData().find(x => x.id === ui.chartEx);
+    if(!e){ ui.view = 'progress'; renderPage(); return; }
+    $('#pTitle').textContent = e.name;
+    $('#pSub').textContent = plural(e.pts.length,'séance');
+    let rec = e.pts[0]; for(const p of e.pts) if(p.w > rec.w || (p.w === rec.w && p.r > rec.r)) rec = p;
+    const last = e.pts[e.pts.length-1];
+    const since = { '3m':91, '1y':365 }[ui.range];
+    const pts = since ? e.pts.filter(p => p.t >= Date.now() - since * 864e5) : e.pts;
+    const chips = [['3m','3 mois'],['1y','1 an'],['all','Tout']].map(([k,l]) => `<button class="chip${ui.range === k ? ' on' : ''}" data-act="setRange" data-r="${k}">${l}</button>`).join('');
+    const rows = e.pts.slice().reverse().map((p, i, a) => `<li><button class="row-btn" data-act="openSession" data-id="${p.sid}">
+      <span class="nm">${esc(fmtDate(p.t))}</span><span class="val" style="font-size:20px">${fmtNum(p.w)}<span class="muted" style="font-size:14px"> kg × ${p.r}</span></span>
+      <span class="sub">${new Date(p.t).getFullYear()}</span>${deltaHTML(p.w, a[i+1] ? a[i+1].w : null)}</button></li>`).join('');
+    body.innerHTML = `
+      <div class="stats2">
+        <div class="stat"><small>Record</small><b>${fmtNum(rec.w)} <em>kg × ${rec.r}</em></b><span>${esc(fmtDateLong(rec.t))}</span></div>
+        <div class="stat"><small>Dernière séance</small><b>${fmtNum(last.w)} <em>kg × ${last.r}</em></b><span>${esc(fmtDateLong(last.t))}</span></div>
+      </div>
+      <div class="chips" role="group" aria-label="Période">${chips}</div>
+      <div class="chart" id="chart">${pts.length ? '' : '<p class="empty" style="padding:24px 12px">Aucune séance sur cette période.</p>'}</div>
+      <section><h3 class="sec-t">Séances · charge max</h3><ul class="prog">${rows}</ul></section>`;
+    if(pts.length) drawChart($('#chart'), pts);
+  }
+}
+
+function niceStep(raw){
+  const p = Math.pow(10, Math.floor(Math.log10(raw)));
+  for(const m of [1, 2, 2.5, 5, 10]) if(m * p >= raw) return m * p;
+  return 10 * p;
+}
+function drawChart(box, pts){
+  const W = Math.max(280, box.clientWidth - 8), H = 230;
+  const L = 40, R = 14, T = 48, B = 26;
+  let lo = Math.min(...pts.map(p => p.w)), hi = Math.max(...pts.map(p => p.w));
+  if(hi - lo < 5){ lo -= 2.5; hi += 2.5; }
+  const step = niceStep((hi - lo) / 4);
+  const y0 = Math.max(0, Math.floor(lo / step) * step), y1 = Math.ceil(hi / step) * step;
+  const t0 = pts[0].t, t1 = pts[pts.length-1].t;
+  const X = t => pts.length === 1 || t1 === t0 ? L + (W - L - R) / 2 : L + (t - t0) / (t1 - t0) * (W - L - R);
+  const Y = v => T + (1 - (v - y0) / (y1 - y0)) * (H - T - B);
+  let g = '';
+  for(let v = y0; v <= y1 + 1e-9; v += step){
+    g += `<line class="c-grid" x1="${L}" x2="${W - R}" y1="${Y(v)}" y2="${Y(v)}"/><text class="c-ax" x="${L - 8}" y="${Y(v) + 4}" text-anchor="end">${fmtNum(v)}</text>`;
+  }
+  const dl = t => new Date(t).toLocaleDateString('fr-FR', { day:'numeric', month:'short' });
+  g += `<text class="c-ax" x="${X(t0)}" y="${H - 6}" text-anchor="${pts.length === 1 ? 'middle' : 'start'}">${dl(t0)}</text>`;
+  if(pts.length > 1) g += `<text class="c-ax" x="${X(t1)}" y="${H - 6}" text-anchor="end">${dl(t1)}</text>`;
+  const line = pts.map((p, i) => (i ? 'L' : 'M') + X(p.t).toFixed(1) + ' ' + Y(p.w).toFixed(1)).join(' ');
+  const area = pts.length > 1 ? `<path class="c-area" d="${line} L${X(t1).toFixed(1)} ${Y(y0)} L${X(t0).toFixed(1)} ${Y(y0)} Z"/>` : '';
+  const dots = pts.length <= 40 ? pts.map(p => `<circle class="c-pt" cx="${X(p.t)}" cy="${Y(p.w)}" r="4"/>`).join('') : '';
+  box.innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Charge maximale par séance">${g}${area}<path class="c-line" d="${line}"/>${dots}
+    <line class="c-cross" id="cx" y1="${T - 6}" y2="${H - B}" x1="0" x2="0"/><circle class="c-sel" id="cs" r="6" cx="0" cy="0"/>
+    <rect x="0" y="0" width="${W}" height="${H}" fill="transparent" id="hit"/></svg><div class="tip" id="tip"></div>`;
+  const svg = box.querySelector('svg');
+  const select = i => {
+    const p = pts[i]; ui.sel = i;
+    const x = X(p.t), y = Y(p.w), k = svg.getBoundingClientRect().width / W;
+    box.querySelector('#cx').setAttribute('x1', x); box.querySelector('#cx').setAttribute('x2', x);
+    box.querySelector('#cs').setAttribute('cx', x); box.querySelector('#cs').setAttribute('cy', y);
+    const tip = box.querySelector('#tip');
+    tip.innerHTML = `<b>${fmtNum(p.w)} kg × ${p.r}</b> · ${esc(fmtDate(p.t))}`;
+    const half = tip.offsetWidth / 2, bw = box.clientWidth;
+    tip.style.left = Math.min(bw - half - 4, Math.max(half + 4, x * k + 4)) + 'px';
+  };
+  const nearest = ev => {
+    const r = svg.getBoundingClientRect(); const x = (ev.clientX - r.left) * (W / r.width);
+    let bi = 0, bd = Infinity; pts.forEach((p, i) => { const d = Math.abs(X(p.t) - x); if(d < bd){ bd = d; bi = i; } });
+    select(bi);
+  };
+  const hit = box.querySelector('#hit');
+  hit.addEventListener('pointerdown', nearest);
+  hit.addEventListener('pointermove', ev => { if(ev.pointerType === 'mouse' || ev.buttons) nearest(ev); });
+  select(ui.sel != null && ui.sel < pts.length ? ui.sel : pts.length - 1);
+}
+
 /* ---------- Sauvegarde ---------- */
 function backupJSON(){
   return JSON.stringify({ app:'fonte', format:1, exportedAt:new Date().toISOString(), data:{ exercises:db.exercises, sessions:db.sessions } });
@@ -691,7 +925,7 @@ function toast(msg){
 }
 let wl = null;
 async function wake(){
-  try{ if(cur() && 'wakeLock' in navigator && document.visibilityState === 'visible' && !wl){ wl = await navigator.wakeLock.request('screen'); wl.addEventListener('release', () => { wl = null; }); } }catch(e){}
+  try{ if(db.activeId && !isEdit() && 'wakeLock' in navigator && document.visibilityState === 'visible' && !wl){ wl = await navigator.wakeLock.request('screen'); wl.addEventListener('release', () => { wl = null; }); } }catch(e){}
 }
 function release(){ try{ wl && wl.release(); }catch(e){} wl = null; }
 
@@ -717,8 +951,8 @@ document.addEventListener('change', e => {
   ex.name = v; save(); toast('Nom mis à jour');
 });
 document.addEventListener('visibilitychange', () => { if(document.visibilityState === 'visible'){ wake(); render(); } });
-setInterval(() => { const s = cur(); if(s && !$('#session').hidden) $('#sMeta').textContent = `${fmtDur(Date.now() - s.start)} · ${plural(countSets(s),'série')}`; }, 20000);
-window.addEventListener('resize', setDockH);
+setInterval(() => { const s = cur(); if(s && !isEdit() && !$('#session').hidden) $('#sMeta').textContent = sessionMeta(s); }, 20000);
+window.addEventListener('resize', () => { setDockH(); if(!cur() && ui.view === 'chart') renderPage(); });
 
 act.hideInstall = () => { $('#installNote').hidden = true; };
 $('#installNote').hidden = !(IOS && TOP && !STANDALONE);

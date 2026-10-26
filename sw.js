@@ -1,6 +1,6 @@
 // Fonte — fonctionnement hors ligne.
 // Pour publier une mise à jour : modifier index.html, puis changer VERSION ci-dessous.
-const VERSION = 'fonte-1.0';
+const VERSION = 'fonte-1.1';
 const SHELL = ['./', './index.html', './manifest.webmanifest', './icon-180.png', './icon-512.png'];
 
 self.addEventListener('install', e => {
